@@ -1,3 +1,7 @@
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Forms;
+
 namespace Flappy_Birds_WFA
 {
     public partial class MainWindow : Form
@@ -5,11 +9,103 @@ namespace Flappy_Birds_WFA
         public MainWindow()
         {
             InitializeComponent();
+            this.BackColor = Color.SkyBlue;
+            this.KeyPreview = true;
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
+            this.InitializeControls();
+            this.Text = "Flappy Bird WFA";
+            this.KeyDown += MainWindow_KeyDown;
+        }
 
+        // Controls
+        TableLayoutPanel menuTable = new TableLayoutPanel();
+
+        Label highscoreLabel = new Label();
+        Label title = new Label();
+
+        Button playButton = new Button();
+
+        BindingSource achievementsBinding = new BindingSource();
+
+        Font titleFont = new Font("Arial", 24, FontStyle.Bold);
+        Font defaultFont = new Font("Arial", 16, FontStyle.Regular);
+        private void InitializeControls()
+        {
+            // Create table menu
+            menuTable.Parent = this;
+            menuTable.Dock = DockStyle.Fill;
+            menuTable.ColumnCount = 1;
+            menuTable.RowCount = 3;
+
+            // Define table rows and columns
+            menuTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 50)); // Title
+            menuTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 50)); // Highscore
+            menuTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100));  // Buttons
+            menuTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+
+            // Create title label
+            title.Text = "Flappy Birds - WFA Edition";
+            title.AutoSize = true;
+            title.Dock = DockStyle.Fill;
+            title.Font = titleFont;
+            title.TextAlign = ContentAlignment.MiddleCenter;
+            menuTable.Controls.Add(title, 0, 0);
+
+            // Setup BindingSource
+            achievementsBinding.DataSource = Achievements.Instance;
+            achievementsBinding.ResetBindings(false);
+
+            // Create highscore label
+            var highscoreBinding = new Binding("Text", Achievements.Instance, "Highscore", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            highscoreBinding.Format += (sender, e) =>
+            {
+                e.Value = $"Highscore: {e.Value}";
+            };
+
+            highscoreLabel.DataBindings.Add(highscoreBinding);
+
+            highscoreLabel.Font = defaultFont;
+            highscoreLabel.AutoSize = true;
+            highscoreLabel.Dock = DockStyle.Fill;
+            highscoreLabel.TextAlign = ContentAlignment.MiddleCenter;
+            menuTable.Controls.Add(highscoreLabel, 0, 1);
+
+            // Create play button
+            playButton.Text = "Play";
+            playButton.Font = defaultFont;
+            playButton.AutoSize = true;
+            playButton.Padding = new Padding(20);
+            playButton.Anchor = AnchorStyles.None;
+            playButton.Click += (sender, e) => StartGame();
+            menuTable.Controls.Add(playButton, 0, 2);
+        }
+
+        // OnClicks
+
+        // Other
+
+        private void StartGame()
+        {
+
+        }
+
+        // Events
+
+        private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Close();
+            }
+
+            if (e.KeyCode == Keys.D && e.Control)
+            {
+                new DebugMenu().Show(this);
+            }
         }
     }
 }

@@ -30,8 +30,7 @@ namespace Flappy_Birds_WFA
 
         BindingSource achievementsBinding = new BindingSource();
 
-        Font titleFont = new Font("Arial", 24, FontStyle.Bold);
-        Font defaultFont = new Font("Arial", 16, FontStyle.Regular);
+
         private void InitializeControls()
         {
             // Create table menu
@@ -50,7 +49,7 @@ namespace Flappy_Birds_WFA
             title.Text = "Flappy Birds - WFA Edition";
             title.AutoSize = true;
             title.Dock = DockStyle.Fill;
-            title.Font = titleFont;
+            title.Font = Globals.TitleFont;
             title.TextAlign = ContentAlignment.MiddleCenter;
             menuTable.Controls.Add(title, 0, 0);
 
@@ -68,7 +67,7 @@ namespace Flappy_Birds_WFA
 
             highscoreLabel.DataBindings.Add(highscoreBinding);
 
-            highscoreLabel.Font = defaultFont;
+            highscoreLabel.Font = Globals.TitleFont;
             highscoreLabel.AutoSize = true;
             highscoreLabel.Dock = DockStyle.Fill;
             highscoreLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -76,7 +75,7 @@ namespace Flappy_Birds_WFA
 
             // Create play button
             playButton.Text = "Play";
-            playButton.Font = defaultFont;
+            playButton.Font = Globals.DefaultFont;
             playButton.AutoSize = true;
             playButton.Padding = new Padding(20);
             playButton.Anchor = AnchorStyles.None;
@@ -90,7 +89,8 @@ namespace Flappy_Birds_WFA
 
         private void StartGame()
         {
-
+            this.Hide();
+            new GameWindow().Show();
         }
 
         // Events

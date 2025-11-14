@@ -20,7 +20,7 @@ namespace Flappy_Birds_WFA.Utils
         Floor floor1, floor2;
 
         // Constants
-        private const int floorScroll = 5; // Floor movement speed
+        private const int scroll = 2; // Floor movement speed
 
 
         public Game()
@@ -92,8 +92,8 @@ namespace Flappy_Birds_WFA.Utils
 
         public void UpdateState(Form sender)
         {
-            floor1.SetPosition(floor1.X - floorScroll, floor1.Y);
-            floor2.SetPosition(floor2.X - floorScroll, floor2.Y);
+            floor1.SetPosition(floor1.X - scroll, floor1.Y);
+            floor2.SetPosition(floor2.X - scroll, floor2.Y);
 
             if (floor1.X + floor1.Width <= 0)
             {

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Flappy_Birds_WFA.Utils;
 using Microsoft.VisualBasic;
 
 namespace Flappy_Birds_WFA

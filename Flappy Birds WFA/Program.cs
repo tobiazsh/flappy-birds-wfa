@@ -1,3 +1,5 @@
+using Flappy_Birds_WFA.Resource;
+
 namespace Flappy_Birds_WFA
 {
     internal static class Program
@@ -10,6 +12,7 @@ namespace Flappy_Birds_WFA
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
+            ResourceHandler.LoadDefaultResources();
             ApplicationConfiguration.Initialize();
             Application.Run(new MainWindow());
         }

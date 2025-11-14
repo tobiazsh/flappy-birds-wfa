@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flappy_Birds_WFA
+namespace Flappy_Birds_WFA.Utils
 {
     class Achievements : INotifyPropertyChanged
     {

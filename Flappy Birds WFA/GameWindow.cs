@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Flappy_Birds_WFA.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +23,12 @@ namespace Flappy_Birds_WFA
             this.BackColor = Color.SkyBlue; // Mimic Sky
             this.KeyDown += Game_KeyDown;
             this.FormClosed += (s, args) => MainWindow.NavigateToMenuHandler(s, args);
+            this.Height = Globals.GameWindowHeight;
+            this.Width = Globals.GameWindowWidth;
+            this.DoubleBuffered = true; // Reduce flickering
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
+            Game.Instance.Initialize(this); // Initialize Game Instance with this window
 
             InitializeComponents();
         }
@@ -29,22 +36,13 @@ namespace Flappy_Birds_WFA
         // Components
 
         Label haltedInfoLabel = new Label();
-        FlowLayoutPanel rootPanel = new FlowLayoutPanel();
         private void InitializeComponents()
         {
-            rootPanel.Parent = this;
-            rootPanel.Dock = DockStyle.Fill;
-            rootPanel.FlowDirection = FlowDirection.TopDown;
-            rootPanel.WrapContents = true;
-            rootPanel.AutoScroll = false;
-
             haltedInfoLabel.Text = $"Game is halted. Press any key to continue and {Keys.Pause.ToString()} to halt again!";
             haltedInfoLabel.DataBindings.Add("Visible", Game.Instance, "IsHalted", true, DataSourceUpdateMode.OnPropertyChanged, true, "");
             haltedInfoLabel.Font = Globals.TitleFont;
             haltedInfoLabel.AutoSize = true;
-            
-            rootPanel.Controls.Add(haltedInfoLabel);
-
+            haltedInfoLabel.Parent = this;
         }
 
         private void Game_KeyDown(object? sender, KeyEventArgs args)
@@ -60,6 +58,11 @@ namespace Flappy_Birds_WFA
                 Game.Instance.IsHalted = false; // Unhalt on any key press
                 return;
             }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            Game.Instance.GameLoop(this, e);
         }
     }
 }

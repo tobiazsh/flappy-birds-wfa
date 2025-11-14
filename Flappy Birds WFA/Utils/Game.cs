@@ -14,8 +14,6 @@ namespace Flappy_Birds_WFA.Utils
         public static Game Instance = new Game();
 
         // Fields
-        private bool _renderOnce = false;
-        
         // Components
         Floor floor1, floor2;
 
@@ -104,11 +102,6 @@ namespace Flappy_Birds_WFA.Utils
             {
                 floor2.SetPosition(floor1.X + floor1.Width, floor2.Y);
             }
-        }
-
-        public void RenderOnce()
-        {
-            _renderOnce = true;
         }
 
         private void OnPropertyChanged(string propertyName)

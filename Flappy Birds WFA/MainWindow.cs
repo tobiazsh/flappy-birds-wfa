@@ -1,5 +1,6 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace Flappy_Birds_WFA
@@ -18,6 +19,7 @@ namespace Flappy_Birds_WFA
             this.InitializeControls();
             this.Text = "Flappy Bird WFA";
             this.KeyDown += MainWindow_KeyDown;
+            this.FormClosed += (s, ev) => Terminate();
         }
 
         // Controls
@@ -111,6 +113,36 @@ namespace Flappy_Birds_WFA
         public static void Terminate()
         {
             Application.Exit();
+        }
+
+        /// <summary>
+        /// Is supposed to be implemented in a FormClosedEvent to navigate back to menu from other forms when they're closed.
+        /// </summary>
+        /// <param name="sender">Sending Form1</param>
+        /// <param name="e">Handler</param>
+        public static void NavigateToMenuHandler(object? sender, FormClosedEventArgs e)
+        {
+            var closingForm = sender as Form;
+            if (closingForm == null) return;
+
+            // Get all open forms EXCEPT the one that just closed
+            var otherForms = Application.OpenForms
+                .OfType<Form>()
+                .Where(f => f != closingForm && !f.IsDisposed && f is not MainWindow)
+                .ToArray();
+
+            // Close all others
+            foreach (var form in otherForms)
+            {
+                form.Close();
+            }
+
+            // Show main menu (create only if not already open)
+            var menu = Application.OpenForms.OfType<MainWindow>().FirstOrDefault()
+                       ?? new MainWindow();
+
+            menu.Show();
+            menu.BringToFront();
         }
     }
 }

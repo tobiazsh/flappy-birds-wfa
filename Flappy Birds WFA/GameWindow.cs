@@ -21,6 +21,7 @@ namespace Flappy_Birds_WFA
         {
             this.BackColor = Color.SkyBlue; // Mimic Sky
             this.KeyDown += Game_KeyDown;
+            this.FormClosed += (s, args) => MainWindow.NavigateToMenuHandler(s, args);
 
             InitializeComponents();
         }
@@ -37,7 +38,7 @@ namespace Flappy_Birds_WFA
             rootPanel.WrapContents = true;
             rootPanel.AutoScroll = false;
 
-            haltedInfoLabel.Text = $"Game is halted. Press any key to continue and {Keys.Pause.ToString()} to halt again!";
+            haltedInfoLabel.Text = $"Game is halted. Press any key to continue and {Keys.Menu.ToString()} to halt again!";
             haltedInfoLabel.DataBindings.Add("Visible", Game.Instance, "IsHalted", true, DataSourceUpdateMode.OnPropertyChanged, true, "");
             haltedInfoLabel.Font = Globals.TitleFont;
             haltedInfoLabel.AutoSize = true;

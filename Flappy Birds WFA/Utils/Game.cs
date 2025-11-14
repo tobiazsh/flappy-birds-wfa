@@ -12,12 +12,16 @@ namespace Flappy_Birds_WFA.Utils
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public static Game Instance = new Game();
+
+        // Fields
+        private bool _renderOnce = false;
         
         // Components
         Floor floor1, floor2;
 
         // Constants
         private const int floorScroll = 5; // Floor movement speed
+
 
         public Game()
         {
@@ -71,11 +75,23 @@ namespace Flappy_Birds_WFA.Utils
 
         public void GameLoop(Form sender, PaintEventArgs e)
         {
-            if (IsHalted) return;
+            if (!IsHalted)
+            {
+                UpdateState(sender); // Allow update state only if not halted
+                sender.Invalidate(); // Inform about update
+            }
 
+            Render(e); // Always render regardless of halted state
+        }
+
+        public void Render(PaintEventArgs e)
+        {
             floor1.Draw(e);
             floor2.Draw(e);
+        }
 
+        public void UpdateState(Form sender)
+        {
             floor1.SetPosition(floor1.X - floorScroll, floor1.Y);
             floor2.SetPosition(floor2.X - floorScroll, floor2.Y);
 
@@ -88,8 +104,11 @@ namespace Flappy_Birds_WFA.Utils
             {
                 floor2.SetPosition(floor1.X + floor1.Width, floor2.Y);
             }
+        }
 
-            sender.Invalidate();
+        public void RenderOnce()
+        {
+            _renderOnce = true;
         }
 
         private void OnPropertyChanged(string propertyName)

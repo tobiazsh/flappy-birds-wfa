@@ -31,6 +31,9 @@ namespace Flappy_Birds_WFA
             Game.Instance.Initialize(this); // Initialize Game Instance with this window
 
             InitializeComponents();
+
+            Game.Instance.RenderOnce(); // Allow one render to setup initial state even if halted
+            this.Invalidate();
         }
 
         // Components
@@ -63,6 +66,7 @@ namespace Flappy_Birds_WFA
         protected override void OnPaint(PaintEventArgs e)
         {
             Game.Instance.GameLoop(this, e);
+            base.OnPaint(e);
         }
     }
 }

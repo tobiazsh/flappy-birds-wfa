@@ -107,5 +107,10 @@ namespace Flappy_Birds_WFA
                 new DebugMenu().Show(this);
             }
         }
+
+        public static void Terminate()
+        {
+            Application.Exit();
+        }
     }
 }

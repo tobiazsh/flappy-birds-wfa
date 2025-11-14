@@ -38,7 +38,7 @@ namespace Flappy_Birds_WFA
             rootPanel.WrapContents = true;
             rootPanel.AutoScroll = false;
 
-            haltedInfoLabel.Text = $"Game is halted. Press any key to continue and {Keys.Menu.ToString()} to halt again!";
+            haltedInfoLabel.Text = $"Game is halted. Press any key to continue and {Keys.Pause.ToString()} to halt again!";
             haltedInfoLabel.DataBindings.Add("Visible", Game.Instance, "IsHalted", true, DataSourceUpdateMode.OnPropertyChanged, true, "");
             haltedInfoLabel.Font = Globals.TitleFont;
             haltedInfoLabel.AutoSize = true;
@@ -49,11 +49,17 @@ namespace Flappy_Birds_WFA
 
         private void Game_KeyDown(object? sender, KeyEventArgs args)
         {
-            if (args.KeyCode == Keys.Pause) // TODO: Change key to something else that's actually recognised
+            if (args.KeyCode == Keys.Pause)
+            {
                 Game.Instance.IsHalted = true; // Halt the game on Pause key
+                return;
+            }
 
             if (Game.Instance.IsHalted)
+            {
                 Game.Instance.IsHalted = false; // Unhalt on any key press
+                return;
+            }
         }
     }
 }

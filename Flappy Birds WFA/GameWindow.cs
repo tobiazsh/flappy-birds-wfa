@@ -27,6 +27,9 @@ namespace Flappy_Birds_WFA
             this.Width = Globals.GameWindowWidth;
             this.DoubleBuffered = true; // Reduce flickering
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            this.FormBorderStyle = FormBorderStyle.FixedDialog; // Prevent resizing
+            this.MaximizeBox = false;
+            this.StartPosition = FormStartPosition.CenterScreen;
 
             Game.Instance.Initialize(this); // Initialize Game Instance with this window
 

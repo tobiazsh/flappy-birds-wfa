@@ -14,7 +14,6 @@ namespace Flappy_Birds_WFA.Utils
         public static Game Instance = new Game();
 
         // Fields
-        private bool _renderOnce = false;
         
         // Components
         Floor floor1, floor2;

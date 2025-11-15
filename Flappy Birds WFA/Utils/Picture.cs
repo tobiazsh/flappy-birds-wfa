@@ -1,11 +1,4 @@
-﻿using Flappy_Birds_WFA.Resource;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing.Imaging;
-using Flappy_Birds_WFA.Exceptions;
+﻿using Flappy_Birds_WFA.Exceptions;
 
 namespace Flappy_Birds_WFA.Utils
 {

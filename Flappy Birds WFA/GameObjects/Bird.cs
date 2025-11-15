@@ -1,13 +1,5 @@
 ﻿using Flappy_Birds_WFA.Resource;
 using Flappy_Birds_WFA.Utils;
-using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Flappy_Birds_WFA.GameObjects
 {

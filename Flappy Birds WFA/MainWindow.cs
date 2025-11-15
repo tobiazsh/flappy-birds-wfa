@@ -1,8 +1,4 @@
 ﻿using Flappy_Birds_WFA.Utils;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
 
 namespace Flappy_Birds_WFA
 {

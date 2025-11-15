@@ -13,8 +13,7 @@ namespace Flappy_Birds_WFA.Resource
             {
                 new Picture(Identifier.Of(Globals.NamespaceName, "bird"), "Resources/bird.png").Load(),
                 new Picture(Identifier.Of(Globals.NamespaceName, "pipe"), "Resources/pipe.png").Load(),
-                new Picture(Identifier.Of(Globals.NamespaceName, "ground"), "Resources/ground.png").Load(),
-                new Picture(Identifier.Of(Globals.NamespaceName, "pipedown"), "Resources/pipedown.png").Load(),
+                new Picture(Identifier.Of(Globals.NamespaceName, "ground"), "Resources/ground.png").Load()
             });
         }
 

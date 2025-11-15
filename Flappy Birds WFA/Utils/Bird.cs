@@ -11,6 +11,13 @@ namespace Flappy_Birds_WFA.Utils
 {
     public class Bird
     {
+        public enum BirdRotation
+        {
+            UP = -25,
+            NORMAL = 0,
+            DOWN = 25
+        }
+
         public static readonly Picture TEXTURE;
 
         static Bird()
@@ -22,10 +29,11 @@ namespace Flappy_Birds_WFA.Utils
         public float Width { get; set; }
         public float Height { get; set; }
         public float JumpCounter { get; set; }
+        public BirdRotation Rotation { get; set; } = BirdRotation.NORMAL;
 
-        public const float GRAVITY = 0.6f;
-        public const float JUMP = 100f;
-        public const float JUMP_SPEED = 1f;
+        public const float GRAVITY = 1f;
+        public const float JUMP = 75f;
+        public const float JUMP_SPEED = 1.5f;
 
         public void Jump()
         {
@@ -43,6 +51,7 @@ namespace Flappy_Birds_WFA.Utils
             if (JumpCounter > 0) // Jump in Progress
             {
                 // Maybe set rotation to upwards for aesthetics here?
+                Rotation = BirdRotation.UP;
 
                 float jumpAmount = Math.Min(JUMP_SPEED, JumpCounter);
                 JumpCounter -= jumpAmount; // Decrease Jump Counter
@@ -50,16 +59,23 @@ namespace Flappy_Birds_WFA.Utils
                 if (Y - jumpAmount > maxHeight)
                     Y -= jumpAmount; // Move Up
                 else
+                {
+                    Rotation = BirdRotation.NORMAL;
                     Y = maxHeight; // Cap at minHeight | Maybe here rotate into normal position
+                }
             }
             else // Apply Gravity if Bird should not jump
             {
                 // Maybe set rotation to downwards for aesthetics here?
+                Rotation = BirdRotation.DOWN;
 
                 if (Y + GRAVITY < minHeight)
                     Y += GRAVITY; // Move Down
-                else
+                else 
+                {
+                    Rotation = BirdRotation.NORMAL;
                     Y = minHeight; // Cap at maxHeight | Maybe here rotate into normal position
+                }
             }
         }
 
@@ -70,6 +86,12 @@ namespace Flappy_Birds_WFA.Utils
             Graphics paintGraphics = e.Graphics;
             paintGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
+            // Rotate Bird
+            paintGraphics.TranslateTransform((float)(X + Width / 2), (float)(Y + Height / 2)); // Move to center of Bird
+            paintGraphics.RotateTransform((float)Rotation); // Rotate Bird
+            paintGraphics.TranslateTransform(-(float)(X + Width / 2), -(float)(Y + Height / 2)); // Move back
+
+            // Draw Bird
             paintGraphics.DrawImage(TEXTURE.Bitmap!, X, Y, Width, Height); // Draw Bird :=)
         }
 

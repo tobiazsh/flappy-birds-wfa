@@ -56,6 +56,11 @@ namespace Flappy_Birds_WFA
                 return;
             }
 
+            if (!Game.Instance.IsHalted && args.KeyCode == Keys.Space)
+            {
+                Game.Instance.Jump();
+            }
+
             if (Game.Instance.IsHalted)
             {
                 Game.Instance.IsHalted = false; // Unhalt on any key press

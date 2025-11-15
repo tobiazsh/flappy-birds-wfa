@@ -27,5 +27,10 @@ namespace Flappy_Birds_WFA.Utils
             paintGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             paintGraphics.DrawImage(TEXTURE.Bitmap!, X, Y, Width, Height);
         }
+
+        public void Scroll(float amount)
+        {
+            this.X -= amount;
+        }
     }
 }

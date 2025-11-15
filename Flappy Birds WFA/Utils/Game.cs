@@ -99,8 +99,14 @@ namespace Flappy_Birds_WFA.Utils
 
         public void UpdateState(Form sender)
         {
-            floor1.SetPosition(floor1.X - scroll, floor1.Y);
-            floor2.SetPosition(floor2.X - scroll, floor2.Y);
+            ScrollFloors();
+            bird.Calculate(floor1.Y - bird.Height, 0);
+        }
+
+        private void ScrollFloors()
+        {
+            floor1.Scroll(scroll);
+            floor2.Scroll(scroll);
 
             if (floor1.X + floor1.Width <= 0)
             {
@@ -111,8 +117,6 @@ namespace Flappy_Birds_WFA.Utils
             {
                 floor2.SetPosition(floor1.X + floor1.Width, floor2.Y);
             }
-
-            bird.Calculate(floor1.Y - bird.Height, 0);
         }
 
         private void OnPropertyChanged(string propertyName)

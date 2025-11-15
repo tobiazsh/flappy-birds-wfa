@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Flappy_Birds_WFA.Utils
 {
-    public class Bird
+    public class Bird : GameObject<Bird>
     {
         public enum BirdRotation
         {
@@ -24,10 +24,7 @@ namespace Flappy_Birds_WFA.Utils
         {
             TEXTURE = (Picture)ResourceHandler.GetResource(Identifier.Of(Globals.NamespaceName, "bird")); // Get Bird Texture from Resources
         }
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Width { get; set; }
-        public float Height { get; set; }
+
         public float JumpCounter { get; set; }
         public BirdRotation Rotation { get; set; } = BirdRotation.NORMAL;
 
@@ -79,7 +76,8 @@ namespace Flappy_Birds_WFA.Utils
             }
         }
 
-        public void Draw(PaintEventArgs e)
+        // Implemented from GameObject
+        public override void Draw(PaintEventArgs e)
         {
             if (TEXTURE == null)
                 throw new NullReferenceException("TEXTURE for Bird is null!");
@@ -93,20 +91,6 @@ namespace Flappy_Birds_WFA.Utils
 
             // Draw Bird
             paintGraphics.DrawImage(TEXTURE.Bitmap!, X, Y, Width, Height); // Draw Bird :=)
-        }
-
-        public Bird SetBounds(float width, float height)
-        {
-            this.Width = width;
-            this.Height = height;
-            return this;
-        }
-
-        public Bird SetPosition(float x, float y)
-        {
-            this.X = x;
-            this.Y = y;
-            return this;
         }
     }
 }

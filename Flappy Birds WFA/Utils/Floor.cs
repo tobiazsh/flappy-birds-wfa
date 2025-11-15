@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Flappy_Birds_WFA.Utils
 {
-    public class Floor
+    public class Floor : GameObject<Floor>
     {
         public static readonly Picture TEXTURE;
 
@@ -17,23 +17,8 @@ namespace Flappy_Birds_WFA.Utils
             TEXTURE = (Picture)ResourceHandler.GetResource(Identifier.Of(Globals.NamespaceName, "ground"));
         }
 
-        public float X, Y, Width, Height;
-
-        public Floor SetBounds(float width, float height)
-        {
-            this.Width = width;
-            this.Height = height;
-            return this;
-        }
-
-        public Floor SetPosition(float x, float y)
-        {
-            this.X = x;
-            this.Y = y;
-            return this;
-        }
-
-        public void Draw(PaintEventArgs e)
+        // Implmented from GameObject
+        public override void Draw(PaintEventArgs e)
         {
             if (TEXTURE == null)
                 throw new NullReferenceException("TEXTURE for Floor is null!");

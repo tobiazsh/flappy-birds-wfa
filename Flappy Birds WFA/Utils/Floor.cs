@@ -22,6 +22,7 @@ namespace Flappy_Birds_WFA.Utils
         {
             if (TEXTURE == null)
                 throw new NullReferenceException("TEXTURE for Floor is null!");
+
             Graphics paintGraphics = e.Graphics;
             paintGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             paintGraphics.DrawImage(TEXTURE.Bitmap!, X, Y, Width, Height);

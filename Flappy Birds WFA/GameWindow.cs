@@ -21,6 +21,7 @@ namespace Flappy_Birds_WFA
             this.FormBorderStyle = FormBorderStyle.FixedDialog; // Prevent resizing
             this.MaximizeBox = false;
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Flappy Birds";
 
             Game.Instance.Initialize(this); // Initialize Game Instance with this window
 

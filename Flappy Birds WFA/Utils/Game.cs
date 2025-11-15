@@ -13,9 +13,9 @@ namespace Flappy_Birds_WFA.Utils
 
         public static Game Instance = new Game();
 
-        // Fields
         // Components
         Floor floor1, floor2;
+        Bird bird;
 
         // Constants
         private const int scroll = 2; // Floor movement speed
@@ -28,6 +28,8 @@ namespace Flappy_Birds_WFA.Utils
 
             floor2 = new Floor()
                 .SetBounds(Globals.GameWindowWidth, Floor.TEXTURE.Size.Height);
+
+            bird = new Bird();
         }
 
         public void Initialize(Form parent)
@@ -39,6 +41,12 @@ namespace Flappy_Birds_WFA.Utils
             floor2
                 .SetBounds(parent.ClientSize.Width, Floor.TEXTURE.Size.Height)
                 .SetPosition(floor1.Width, parent.ClientSize.Height - floor2.Height);
+
+            bird
+                .SetPosition(
+                    parent.ClientSize.Width / 4 - Bird.TEXTURE.Size.Width / 2,
+                    parent.ClientSize.Height / 2 - Bird.TEXTURE.Size.Height / 2)
+                .SetBounds(Bird.TEXTURE.Size.Width, Bird.TEXTURE.Size.Height);
         }
 
         // Private Fields
@@ -86,6 +94,7 @@ namespace Flappy_Birds_WFA.Utils
         {
             floor1.Draw(e);
             floor2.Draw(e);
+            bird.Draw(e);
         }
 
         public void UpdateState(Form sender)
@@ -102,11 +111,18 @@ namespace Flappy_Birds_WFA.Utils
             {
                 floor2.SetPosition(floor1.X + floor1.Width, floor2.Y);
             }
+
+            bird.Calculate(floor1.Y - bird.Height, 0);
         }
 
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Jump()
+        {
+            bird.Jump();
         }
     }
 }

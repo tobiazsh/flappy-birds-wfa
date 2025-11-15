@@ -1,4 +1,5 @@
 ﻿using Flappy_Birds_WFA.Resource;
+using Flappy_Birds_WFA.Utils;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flappy_Birds_WFA.Utils
+namespace Flappy_Birds_WFA.GameObjects
 {
     public class Bird : GameObject<Bird>
     {
@@ -28,9 +29,9 @@ namespace Flappy_Birds_WFA.Utils
         public float JumpCounter { get; set; }
         public BirdRotation Rotation { get; set; } = BirdRotation.NORMAL;
 
-        public const float GRAVITY = 1f;
+        public const float GRAVITY = 1.5f;
         public const float JUMP = 75f;
-        public const float JUMP_SPEED = 1.5f;
+        public const float JUMP_SPEED = 3f;
 
         public void Jump()
         {
@@ -82,6 +83,9 @@ namespace Flappy_Birds_WFA.Utils
             if (TEXTURE == null)
                 throw new NullReferenceException("TEXTURE for Bird is null!");
             Graphics paintGraphics = e.Graphics;
+
+            var state = paintGraphics.Save();
+
             paintGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             // Rotate Bird
@@ -91,6 +95,8 @@ namespace Flappy_Birds_WFA.Utils
 
             // Draw Bird
             paintGraphics.DrawImage(TEXTURE.Bitmap!, X, Y, Width, Height); // Draw Bird :=)
+
+            paintGraphics.Restore(state);
         }
     }
 }

@@ -14,7 +14,6 @@
     <None Remove="Resources\bird.png" />
     <None Remove="Resources\ground.png" />
     <None Remove="Resources\pipe.png" />
-    <None Remove="Resources\pipedown.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,9 +22,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\pipe.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\pipedown.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

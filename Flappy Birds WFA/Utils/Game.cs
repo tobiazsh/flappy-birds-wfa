@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Flappy_Birds_WFA.GameObjects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,36 +15,42 @@ namespace Flappy_Birds_WFA.Utils
         public static Game Instance = new Game();
 
         // Components
-        Floor floor1, floor2;
-        Bird bird;
+        private Floor _floor1, _floor2;
+        private Bird _bird;
+        private List<PipePair> _pipes = new List<PipePair>();
+
+        private int _nextPipe = 0;
+
+        private bool _isGameOver = false;
 
         // Constants
-        private const int scroll = 2; // Floor movement speed
+        private const int SCROLL = 2; // Floor movement speed
 
+        private const int PIPE_SPAWN_MIN_INTERVAL = 150; // Minimum interval between pipes
+        private const int PIPE_SPAWN_MAX_INTERVAL = 400; // Maximum interval between pipes
+        private const int PIPE_MIN_GAP = 120; // Minimum gap between pipes
+        private const int PIPE_MAX_GAP = 400; // Maximum gap between pipes
+        private const int PIPE_MIN_WIDTH = 50; // Minimum pipe width
+        private const int PIPE_MAX_WIDTH = 200; // Maximum pipe width
 
         public Game()
         {
-            floor1 = new Floor()
-                .SetBounds(Globals.GameWindowWidth, Floor.TEXTURE.Size.Height);
+            _floor1 = new Floor().SetBounds(Globals.GameWindowWidth, Floor.TEXTURE.Size.Height);
 
-            floor2 = new Floor()
-                .SetBounds(Globals.GameWindowWidth, Floor.TEXTURE.Size.Height);
+            _floor2 = new Floor().SetBounds(Globals.GameWindowWidth, Floor.TEXTURE.Size.Height);
 
-            bird = new Bird();
+            _bird = new Bird();
         }
 
         public void Initialize(Form parent)
         {
-            floor1
-                .SetBounds(parent.ClientSize.Width, Floor.TEXTURE.Size.Height)
-                .SetPosition(0, parent.ClientSize.Height - floor1.Height);
+            _floor1.SetBounds(parent.ClientSize.Width, Floor.TEXTURE.Size.Height)
+                  .SetPosition(0, parent.ClientSize.Height - _floor1.Height);
 
-            floor2
-                .SetBounds(parent.ClientSize.Width, Floor.TEXTURE.Size.Height)
-                .SetPosition(floor1.Width, parent.ClientSize.Height - floor2.Height);
+            _floor2.SetBounds(parent.ClientSize.Width, Floor.TEXTURE.Size.Height)
+                  .SetPosition(_floor1.Width, parent.ClientSize.Height - _floor2.Height);
 
-            bird
-                .SetPosition(
+            _bird.SetPosition(
                     parent.ClientSize.Width / 4 - Bird.TEXTURE.Size.Width / 2,
                     parent.ClientSize.Height / 2 - Bird.TEXTURE.Size.Height / 2)
                 .SetBounds(Bird.TEXTURE.Size.Width, Bird.TEXTURE.Size.Height);
@@ -79,6 +86,17 @@ namespace Flappy_Birds_WFA.Utils
             }
         }
 
+        public bool IsGameOver
+        {
+            get => _isGameOver;
+            set
+            {
+                if (_isGameOver == value) return;
+                _isGameOver = value;
+                OnPropertyChanged(nameof(IsGameOver));
+            }
+        }
+
         public void GameLoop(Form sender, PaintEventArgs e)
         {
             if (!IsHalted)
@@ -92,30 +110,87 @@ namespace Flappy_Birds_WFA.Utils
 
         public void Render(PaintEventArgs e)
         {
-            floor1.Draw(e);
-            floor2.Draw(e);
-            bird.Draw(e);
+            _pipes.ForEach(pipePair => pipePair.Draw(e));
+            _floor1.Draw(e);
+            _floor2.Draw(e);
+            _bird.Draw(e);
         }
 
         public void UpdateState(Form sender)
         {
+            ScrollPipes(sender);
+            CheckScored();
             ScrollFloors();
-            bird.Calculate(floor1.Y - bird.Height, 0);
+            UpdateBird();
         }
 
         private void ScrollFloors()
         {
-            floor1.Scroll(scroll);
-            floor2.Scroll(scroll);
+            _floor1.Scroll(SCROLL);
+            _floor2.Scroll(SCROLL);
 
-            if (floor1.X + floor1.Width <= 0)
+            // Check floor out of bounds and reposition
+            if (_floor1.X + _floor1.Width <= 0)
             {
-                floor1.SetPosition(floor2.X + floor2.Width, floor1.Y);
+                _floor1.SetPosition(_floor2.X + _floor2.Width, _floor1.Y);
             }
 
-            if (floor2.X + floor2.Width <= 0)
+            // Check floor out of bounds and reposition
+            if (_floor2.X + _floor2.Width <= 0)
             {
-                floor2.SetPosition(floor1.X + floor1.Width, floor2.Y);
+                _floor2.SetPosition(_floor1.X + _floor1.Width, _floor2.Y);
+            }
+        }
+
+        private void ScrollPipes(Form sender)
+        {
+            if (_nextPipe == 0)
+            {
+                _pipes.Add(PipePair.GenerateRandom(
+                    PIPE_MIN_GAP, 
+                    PIPE_MAX_GAP, 
+                    PIPE_MIN_WIDTH, 
+                    PIPE_MAX_WIDTH, 
+                    sender.ClientSize.Height, sender.ClientSize.Width));
+
+                _nextPipe = new Random().Next(PIPE_SPAWN_MIN_INTERVAL, PIPE_SPAWN_MAX_INTERVAL);
+            }
+
+            _nextPipe--;
+
+            _pipes.ForEach(pipePair => pipePair.Scroll(SCROLL));
+
+            _pipes.Where(pipePair => pipePair.IsCompletelyOutOfBounds(0, true) == true)
+                 .ToList()
+                 .ForEach(pipePair => _pipes.Remove(pipePair)); // Remove out of bounds pipes
+
+            if (_pipes.Any(pipePair => pipePair.IntersectsWith(_bird)))
+            {
+                GameOver();
+            }
+        }
+
+        private void GameOver()
+        {
+            IsGameOver = true;
+            IsHalted = true;
+            Achievements.Instance.Highscore = Math.Max(Achievements.Instance.Highscore, Score);
+        }
+
+        private void UpdateBird()
+        {
+            _bird.Calculate(_floor1.Y - _bird.Height, 0);
+        }
+
+        private void CheckScored()
+        {
+            foreach (var pipePair in _pipes)
+            {
+                if (!pipePair.HasBeenScored && pipePair.CheckScore(_bird))
+                {
+                    Score++;
+                    pipePair.HasBeenScored = true;
+                }
             }
         }
 
@@ -126,7 +201,27 @@ namespace Flappy_Birds_WFA.Utils
 
         public void Jump()
         {
-            bird.Jump();
+            _bird.Jump();
+        }
+
+        public void Reset()
+        {
+            _pipes.Clear();
+            _nextPipe = 0;
+
+            _score = 0;
+            _isGameOver = false;
+            _isHalted = true;
+
+            // Recreate entities so they start fresh. Positions will be set in Initialize(parent) afterwards.
+            _bird = new Bird();
+            _floor1 = new Floor();
+            _floor2 = new Floor();
+
+            // Notify bindings about property changes so UI updates correctly
+            OnPropertyChanged(nameof(Score));
+            OnPropertyChanged(nameof(IsGameOver));
+            OnPropertyChanged(nameof(IsHalted));
         }
     }
 }

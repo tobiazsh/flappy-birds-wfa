@@ -5,6 +5,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,13 +13,6 @@ namespace Flappy_Birds_WFA.GameObjects
 {
     public class Bird : GameObject<Bird>
     {
-        public enum BirdRotation
-        {
-            UP = -25,
-            NORMAL = 0,
-            DOWN = 25
-        }
-
         public static readonly Picture TEXTURE;
 
         static Bird()
@@ -26,16 +20,19 @@ namespace Flappy_Birds_WFA.GameObjects
             TEXTURE = (Picture)ResourceHandler.GetResource(Identifier.Of(Globals.NamespaceName, "bird")); // Get Bird Texture from Resources
         }
 
-        public float JumpCounter { get; set; }
-        public BirdRotation Rotation { get; set; } = BirdRotation.NORMAL;
+        public float _velocity = 0f; // pixels / second
+        public float Rotation { get; private set; } = 0f; // degrees
 
-        public const float GRAVITY = 1.5f;
-        public const float JUMP = 75f;
-        public const float JUMP_SPEED = 3f;
+        public const float GRAVITY = 1500f;         // pixels / second^2
+        public const float JUMP_VELOCITY = -450f;   // initial jump impulse (pixels / second)
+        public const float MAX_FALL_SPEED = 900f;   // terminal velocity (pixels / second)
+        public const float ROTATION_UP = -25f;      // degrees when ascending
+        public const float ROTATION_DOWN = 85f;     // degrees when descending
+        public const float ROTATION_SPEED = 300f;   // degrees per second
 
         public void Jump()
         {
-            JumpCounter += JUMP;
+            _velocity = JUMP_VELOCITY;
         }
 
         /// <summary>
@@ -43,38 +40,45 @@ namespace Flappy_Birds_WFA.GameObjects
         /// </summary>
         /// <param name="minHeight">The min height of the bird's position</param>
         /// <param name="maxHeight">The max height of the bird's position</param>
-        public void Calculate(float minHeight, float maxHeight)
+        /// <param name="dt">Delta Time since last frame in seconds</param>
+        public void Calculate(float minHeight, float maxHeight, float dt)
         {
             // Animate Falling/Jumping
-            if (JumpCounter > 0) // Jump in Progress
-            {
-                // Maybe set rotation to upwards for aesthetics here?
-                Rotation = BirdRotation.UP;
+            if (dt <= 0f) return; // No time has passed
 
-                float jumpAmount = Math.Min(JUMP_SPEED, JumpCounter);
-                JumpCounter -= jumpAmount; // Decrease Jump Counter
-                
-                if (Y - jumpAmount > maxHeight)
-                    Y -= jumpAmount; // Move Up
-                else
-                {
-                    Rotation = BirdRotation.NORMAL;
-                    Y = maxHeight; // Cap at minHeight | Maybe here rotate into normal position
-                }
-            }
-            else // Apply Gravity if Bird should not jump
-            {
-                // Maybe set rotation to downwards for aesthetics here?
-                Rotation = BirdRotation.DOWN;
+            _velocity += GRAVITY * dt; // Apply gravity
+            if (_velocity > MAX_FALL_SPEED)
+                _velocity = MAX_FALL_SPEED; // Cap fall speed
 
-                if (Y + GRAVITY < minHeight)
-                    Y += GRAVITY; // Move Down
-                else 
-                {
-                    Rotation = BirdRotation.NORMAL;
-                    Y = minHeight; // Cap at maxHeight | Maybe here rotate into normal position
-                }
+            Y += _velocity * dt; // Update position
+
+            // Clamp to bounds and zero velocity on contact
+            if (Y > minHeight)
+            {
+                Y = minHeight;
+                _velocity = 0f;
             }
+            if (Y < maxHeight)
+            {
+                Y = maxHeight;
+                _velocity = 0f;
+            }
+
+            // Compute target rotation based on velocity
+            // velocity is negative when going up, positive when going down
+            float vMin = JUMP_VELOCITY;  // most negative velocity
+            float vMax = MAX_FALL_SPEED; // most positive velocity
+            float t = (_velocity - vMin) / (vMax - vMin); // normalized [0, 1]
+            t = Math.Clamp(t, 0f, 1f);
+            float targetRotation = ROTATION_UP + t * (ROTATION_DOWN - ROTATION_UP);
+
+            // Smoothly move rotation toward target
+            float maxDelta = ROTATION_SPEED * dt;
+            float diff = targetRotation - Rotation;
+            if (Math.Abs(diff) <= maxDelta)
+                Rotation = targetRotation;
+            else
+                Rotation += Math.Sign(diff) * maxDelta;
         }
 
         // Implemented from GameObject

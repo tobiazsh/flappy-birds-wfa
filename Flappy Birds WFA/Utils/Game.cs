@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,6 +61,7 @@ namespace Flappy_Birds_WFA.Utils
 
         private int _score;
         private bool _isHalted = true; // Make game not immediately start
+        private readonly Stopwatch _gameTimer = Stopwatch.StartNew();
 
         // Properties
         public int Score
@@ -99,9 +101,12 @@ namespace Flappy_Birds_WFA.Utils
 
         public void GameLoop(Form sender, PaintEventArgs e)
         {
+            float dt = (float)_gameTimer.Elapsed.TotalSeconds;
+            _gameTimer.Restart();
+
             if (!IsHalted)
             {
-                UpdateState(sender); // Allow update state only if not halted
+                UpdateState(sender, dt); // Allow update state only if not halted
                 sender.Invalidate(); // Inform about update
             }
 
@@ -116,12 +121,12 @@ namespace Flappy_Birds_WFA.Utils
             _bird.Draw(e);
         }
 
-        public void UpdateState(Form sender)
+        public void UpdateState(Form sender, float dt)
         {
             ScrollPipes(sender);
             CheckScored();
             ScrollFloors();
-            UpdateBird();
+            UpdateBird(dt);
         }
 
         private void ScrollFloors()
@@ -177,9 +182,9 @@ namespace Flappy_Birds_WFA.Utils
             Achievements.Instance.Highscore = Math.Max(Achievements.Instance.Highscore, Score);
         }
 
-        private void UpdateBird()
+        private void UpdateBird(float dt)
         {
-            _bird.Calculate(_floor1.Y - _bird.Height, 0);
+            _bird.Calculate(_floor1.Y - _bird.Height, 0, dt);
         }
 
         private void CheckScored()

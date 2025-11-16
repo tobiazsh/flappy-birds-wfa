@@ -8,11 +8,11 @@ namespace Flappy_Birds_WFA
         public DebugMenu()
         {
             InitializeComponent();
-            this.Text = "DEBUG MENU";
         }
 
         private void DebugMenu_Load(object sender, EventArgs e)
         {
+            this.Text = "DEBUG MENU";
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             InitializeControls();
@@ -21,6 +21,8 @@ namespace Flappy_Birds_WFA
         private FlowLayoutPanel rootPanel = new FlowLayoutPanel();
 
         private Button SetHighscoreButton = new Button();
+        private Button OpenConsoleButton;
+
         private void InitializeControls()
         {
             rootPanel.Parent = this;
@@ -30,6 +32,14 @@ namespace Flappy_Birds_WFA
             SetHighscoreButton.AutoSize = true;
             SetHighscoreButton.Text = "Set Highscore";
             rootPanel.Controls.Add(SetHighscoreButton);
+
+            OpenConsoleButton = new Button
+            {
+                Parent = rootPanel,
+                AutoSize = true,
+                Text = "Open Debug Console"
+            };
+            OpenConsoleButton.Click += (s, e) => DebugConsole.Instance.Show();
         }
 
         private void SetHighscoreButton_Click(object? sender, EventArgs e)

@@ -88,6 +88,7 @@ namespace Flappy_Birds_WFA
 
         private void StartGame()
         {
+            ConsoleWriter.DebugLine("Starting new game...");
             this.Hide();
             new GameWindow().Show();
         }
@@ -96,6 +97,8 @@ namespace Flappy_Birds_WFA
 
         private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
         {
+            ConsoleWriter.DebugLine($"Key pressed: {e.KeyCode}");
+
             if (e.KeyCode == Keys.Escape)
             {
                 this.Close();
@@ -104,11 +107,13 @@ namespace Flappy_Birds_WFA
             if (e.KeyCode == Keys.D && e.Control)
             {
                 new DebugMenu().Show(this);
+                ConsoleWriter.DebugLine("Debug menu opened.");
             }
         }
 
         public static void Terminate()
         {
+            ConsoleWriter.DebugLine("Application terminating...");
             Application.Exit();
         }
 
@@ -119,6 +124,8 @@ namespace Flappy_Birds_WFA
         /// <param name="e">Handler</param>
         public static void NavigateToMenuHandler(object? sender, FormClosedEventArgs e)
         {
+            ConsoleWriter.DebugLine("Navigating back to main menu...");
+
             var closingForm = sender as Form;
             if (closingForm == null) return;
 

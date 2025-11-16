@@ -72,19 +72,12 @@ namespace Flappy_Birds_WFA
             gameOverLabel.AutoSize = true;
             gameOverLabel.Location = new Point((this.ClientSize.Width - gameOverLabel.Width) / 2, (this.ClientSize.Height - gameOverLabel.Height) / 2);
             gameOverLabel.Parent = this;
-
-            // Listen to game property changes as fallback
-            Game.Instance.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(Game.Score) || e.PropertyName == nameof(Game.IsGameOver))
-                {
-                    this.BeginInvoke(() => RecenterGameOverLabel());
-                }
-            };
         }
 
         private void RecenterGameOverLabel()
         {
+            Console.WriteLine("Recentering Game Over Label");
+
             gameOverLabel.PerformLayout();
             int x = Math.Max(0, (this.ClientSize.Width - gameOverLabel.Width) / 2);
             int y = Math.Max(0, (this.ClientSize.Height - gameOverLabel.Height) / 2);
@@ -95,6 +88,8 @@ namespace Flappy_Birds_WFA
 
         private void Game_KeyDown(object? sender, KeyEventArgs args)
         {
+            ConsoleWriter.DebugLine($"Key Pressed: {args.KeyCode}");
+
             if (args.KeyCode == Keys.Pause)
             {
                 Game.Instance.IsHalted = true; // Halt the game on Pause key

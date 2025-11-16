@@ -12,6 +12,11 @@ namespace Flappy_Birds_WFA.GameObjects
             TEXTURE = (Picture)ResourceHandler.GetResource(Identifier.Of(Globals.NamespaceName, "bird")); // Get Bird Texture from Resources
         }
 
+        public Bird(float startingPositionY)
+        {
+            Y = startingPositionY;
+        }
+
         public float _velocity = 0f; // pixels / second
         public float Rotation { get; private set; } = 0f; // degrees
 

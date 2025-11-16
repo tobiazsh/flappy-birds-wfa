@@ -20,22 +20,20 @@ namespace Flappy_Birds_WFA.Utils
         private bool _isGameOver = false;
 
         // Constants
-        private const int SCROLL = 2; // Floor movement speed
+        private const float SCROLL = 200f; // Floor movement speed
 
-        private const int PIPE_SPAWN_MIN_INTERVAL = 150; // Minimum interval between pipes
-        private const int PIPE_SPAWN_MAX_INTERVAL = 400; // Maximum interval between pipes
+        private const int PIPE_SPAWN_MIN_INTERVAL = 250; // Minimum interval between pipes
+        private const int PIPE_SPAWN_MAX_INTERVAL = 600; // Maximum interval between pipes
         private const int PIPE_MIN_GAP = 120; // Minimum gap between pipes
-        private const int PIPE_MAX_GAP = 400; // Maximum gap between pipes
+        private const int PIPE_MAX_GAP = 450; // Maximum gap between pipes
         private const int PIPE_MIN_WIDTH = 50; // Minimum pipe width
-        private const int PIPE_MAX_WIDTH = 200; // Maximum pipe width
+        private const int PIPE_MAX_WIDTH = 150; // Maximum pipe width
 
         public Game()
         {
             _floor1 = new Floor().SetBounds(Globals.GameWindowWidth, Floor.TEXTURE.Size.Height);
-
             _floor2 = new Floor().SetBounds(Globals.GameWindowWidth, Floor.TEXTURE.Size.Height);
-
-            _bird = new Bird();
+            _bird = new Bird(Globals.GameWindowHeight / 2);
         }
 
         public void Initialize(Form parent)
@@ -68,6 +66,7 @@ namespace Flappy_Birds_WFA.Utils
 
                 _score = value;
                 OnPropertyChanged(nameof(Score));
+                ConsoleWriter.DebugLine($"Score updated to: {_score}");
             }
         }
 
@@ -80,6 +79,7 @@ namespace Flappy_Birds_WFA.Utils
 
                 _isHalted = value;
                 OnPropertyChanged(nameof(IsHalted));
+                ConsoleWriter.DebugLine($"Game Halted State changed to: {_isHalted}");
             }
         }
 
@@ -91,6 +91,7 @@ namespace Flappy_Birds_WFA.Utils
                 if (_isGameOver == value) return;
                 _isGameOver = value;
                 OnPropertyChanged(nameof(IsGameOver));
+                ConsoleWriter.DebugLine($"Game Over State changed to: {_isGameOver}");
             }
         }
 
@@ -118,16 +119,16 @@ namespace Flappy_Birds_WFA.Utils
 
         public void UpdateState(Form sender, float dt)
         {
-            ScrollPipes(sender);
+            ScrollPipes(sender, dt);
             CheckScored();
-            ScrollFloors();
+            ScrollFloors(dt);
             UpdateBird(dt);
         }
 
-        private void ScrollFloors()
+        private void ScrollFloors(float dt)
         {
-            _floor1.Scroll(SCROLL);
-            _floor2.Scroll(SCROLL);
+            _floor1.Scroll(SCROLL * dt);
+            _floor2.Scroll(SCROLL * dt);
 
             // Check floor out of bounds and reposition
             if (_floor1.X + _floor1.Width <= 0)
@@ -142,7 +143,7 @@ namespace Flappy_Birds_WFA.Utils
             }
         }
 
-        private void ScrollPipes(Form sender)
+        private void ScrollPipes(Form sender, float dt)
         {
             if (_nextPipe == 0)
             {
@@ -154,18 +155,24 @@ namespace Flappy_Birds_WFA.Utils
                     sender.ClientSize.Height, sender.ClientSize.Width));
 
                 _nextPipe = new Random().Next(PIPE_SPAWN_MIN_INTERVAL, PIPE_SPAWN_MAX_INTERVAL);
+                ConsoleWriter.DebugLine($"Spawned new pipe. Next pipe in {_nextPipe} renders.");
             }
 
             _nextPipe--;
 
-            _pipes.ForEach(pipePair => pipePair.Scroll(SCROLL));
+            _pipes.ForEach(pipePair => pipePair.Scroll(SCROLL * dt));
 
-            _pipes.Where(pipePair => pipePair.IsCompletelyOutOfBounds(0, true) == true)
+            _pipes.Where(pipePair => pipePair.IsCompletelyOutOfBounds(0, true))
                  .ToList()
-                 .ForEach(pipePair => _pipes.Remove(pipePair)); // Remove out of bounds pipes
+                 .ForEach(pipePair =>
+                 {
+                     _pipes.Remove(pipePair);
+                     ConsoleWriter.DebugLine("Removed out of bounds pipe.");
+                 }); // Remove out of bounds pipes
 
             if (_pipes.Any(pipePair => pipePair.IntersectsWith(_bird)))
             {
+                ConsoleWriter.DebugLine("Collision detected!");
                 GameOver();
             }
         }
@@ -214,7 +221,7 @@ namespace Flappy_Birds_WFA.Utils
             _isHalted = true;
 
             // Recreate entities so they start fresh. Positions will be set in Initialize(parent) afterwards.
-            _bird = new Bird();
+            _bird = new Bird(Globals.GameWindowHeight / 2);
             _floor1 = new Floor();
             _floor2 = new Floor();
 
@@ -222,6 +229,8 @@ namespace Flappy_Birds_WFA.Utils
             OnPropertyChanged(nameof(Score));
             OnPropertyChanged(nameof(IsGameOver));
             OnPropertyChanged(nameof(IsHalted));
+
+            ConsoleWriter.DebugLine("Game reset.");
         }
     }
 }

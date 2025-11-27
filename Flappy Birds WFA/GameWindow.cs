@@ -88,8 +88,6 @@ namespace Flappy_Birds_WFA
 
         private void Game_KeyDown(object? sender, KeyEventArgs args)
         {
-            ConsoleWriter.DebugLine($"Key Pressed: {args.KeyCode}");
-
             if (args.KeyCode == Keys.Pause)
             {
                 Game.Instance.IsHalted = true; // Halt the game on Pause key
